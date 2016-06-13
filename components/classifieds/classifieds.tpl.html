@@ -1,0 +1,98 @@
+<md-toolbar>
+    <div class="md-toolbar-tools">
+        <p><strong>The New OLX</strong></p>
+        <md-button ng-click="vm.openSidebar()">
+            <i class="material-icons">add_circle_outline</i> New Goods
+        </md-button>
+
+        <md-button ng-show="!showFilters" ng-click="showFilters = true">
+            <i class="material-icons">search</i> Filters
+        </md-button>
+
+        <md-button ng-click="showFilters = false" ng-show="showFilters" >
+            Close Filters
+        </md-button>
+
+<div layout="row"   flex="33" layout-align="end center">
+  <md-button class="md-raised ">Register</md-button>
+  <md-button class="md-raised ">Log in</md-button>
+</div>
+
+    </div>
+</md-toolbar>
+
+
+<div class="filters" layout="row" layout-align="center center" ng-show="showFilters">
+
+
+    <md-input-container class="search">
+        <label>Enter Search Term</label>
+        <input type="text" ng-model="classifiedsFilter">
+    </md-input-container>
+
+    <md-input-container class="search">
+        <label>Category</label>
+        <md-select ng-model="category">
+            <md-option ng-repeat="category in vm.categories" value="{{ category }}">{{ category }}</md-option>
+        </md-select>
+    </md-input-container>
+
+    <div layout="row">
+        <md-button class="md-raised md-warn" ng-click="classifiedsFilter = '';
+   category = ''">Clear</md-button>
+    </div>
+
+</div>
+
+<ui-view></ui-view>
+
+<md-content class="md-padding" layout="row" layout-wrap>
+    <md-card ng-repeat="classified in vm.classifieds  |
+               filter: classifiedsFilter |
+               filter: category" flex="31" class="classified">
+        <img ng-src="{{classified.image}}" alt="">
+        <md-card-content>
+
+            <div class="classified-info" ng-show="!showContact">
+                <h2 ng-show="!showComments" class="md-title">{{classified.title}}</h2>
+                <h2 ng-show="!showComments">{{classified.posted | date :'longDate'}}</h2>
+                <h3 ng-show="!showComments">{{classified.price | currency}}</h3>
+                <p ng-show="!showComments"> {{classified.description}}</p>
+
+
+            </div>
+
+            <div class="classified-contact" ng-show="showContact">
+                <p><i class="material-icons">account_circle</i> {{classified.contact.name}}</p>
+                <p><i class="material-icons">phone</i> {{classified.contact.phone}}</p>
+                <p><i class="material-icons">email</i> {{classified.contact.email}}</p>
+            </div>
+
+            <div layout="row">
+                <md-button class="md-raised" ng-click="showContact = true" ng-hide="showContact" ng-show="!showComments" ng-show="!showContact">Contact</md-button>
+                <md-button class="md-raised" ng-click="showContact = false" ng-show="showContact">Details</md-button>
+                <md-button class="md-raised" ng-click="showAdmin = true" ng-show="!showComments" ng-show="!showAdmin">Admin</md-button>
+                <md-button class="md-raised" ng-click="showAdmin = false" ng-show="showAdmin">Close</md-button>
+                <md-button class="md-raised" ng-click="showComments = true" ng-hide="showAdmin" ng-show="!showComments">Comments</md-button>
+                <md-button class="md-raised" ng-click="showComments = false" ng-show="showComments">Close</md-button>
+            </div>
+
+            <div class="classified-admin" ng-if="showAdmin">
+                <h3>Admin</h3>
+                <md-button ng-click="vm.editClassified(classified)"  class="md-raised md-primary">Edit</md-button>
+                <md-button ng-click="vm.deleteClassified($event, classified)"  class="md-raised md-warn">Delete</md-button>
+            </div>
+
+            <div class="classified-admin" ng-if="showComments">
+                <h3>Comments</h3>
+                <textarea id="TextArea" ng-model="loremIpsum" ng-keyup="autoExpand($event)" placeholder="Send your Feedback">
+                </textarea>
+                <md-button class="md-raised ">Submit</md-button>
+                <md-button class="md-raised ">All Comments</md-button>
+
+            </div>
+
+
+        </md-card-content>
+    </md-card>
+</md-content>
